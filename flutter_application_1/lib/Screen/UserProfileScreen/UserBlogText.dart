@@ -1,45 +1,44 @@
 import 'package:awesome_bookmark_icon_button/awesome_bookmark_icon_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Screen/UserProfileScreen/builUserProfile.dart';
+import 'package:flutter_application_1/Colors/Palette.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:like_button/like_button.dart';
-import 'package:transparent_image/transparent_image.dart';
 
-import '../TextPage/TextPage.dart';
+import '../../TextPage/TextPage.dart';
 
-class FlowWidget extends StatefulWidget {
-  String? id;
-  FlowWidget({required this.id});
+enum Menu { delete, edit }
 
+class UserBlogText extends StatefulWidget {
+  String uid;
+  String? name;
+  UserBlogText({required this.uid, this.name});
   @override
-  State<FlowWidget> createState() => _FlowWidgetState(id: id);
+  State<StatefulWidget> createState() => _UserBlogText(uid: uid, name: name);
 }
 
-class _FlowWidgetState extends State<FlowWidget> {
-  String? id;
-  _FlowWidgetState({required this.id});
-
+class _UserBlogText extends State<UserBlogText> {
+  String uid;
+  String? name;
+  _UserBlogText({required this.uid, this.name});
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _userstream = FirebaseFirestore.instance
+    final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
         .collection('Posts')
-        .doc(id)
+        .doc(uid.toString())
         .collection('Texts')
         .snapshots();
-    bool checkSave = false;
-    bool checkLike = false;
-    bool checkShare = false;
-    int like = 0;
-    return _userstream == null
+    print(_usersStream);
+
+    return _usersStream == null
         ? Text("data")
         : StreamBuilder<QuerySnapshot>(
-            stream: _userstream,
+            stream: _usersStream,
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
@@ -47,68 +46,73 @@ class _FlowWidgetState extends State<FlowWidget> {
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center();
+                return Text("Loading");
               }
-              return SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 40),
-                scrollDirection: Axis.vertical,
-                child: StaggeredGrid.count(
-                  crossAxisSpacing: 20,
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 20,
-                  children:
-                      snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
 
-                    return StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection("Users")
-                          .doc(
-                              FirebaseAuth.instance.currentUser!.uid.toString())
-                          .collection("TextInfo")
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something went wrong');
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container();
-                        }
-                        snapshot.data!.docs.forEach((element) {
-                          Map<String, dynamic> datas =
-                              element.data()! as Map<String, dynamic>;
-
-                          if (element.id == 'Save' &&
-                              datas.containsKey(data['Title'])) {
-                            checkSave = true;
-                          } else if (element.id == 'Save' &&
-                              !datas.containsKey(data['Title'])) {
-                            checkSave = false;
-                          }
-                          if (element.id == 'Likes' &&
-                              datas.containsKey(data['Title'])) {
-                            checkLike = true;
-                          } else if (element.id == 'Likes' &&
-                              !datas.containsKey(data['Title'])) {
-                            checkLike = false;
-                          }
-                        });
-
-                        return FlowWidgetDetails(
-                            data, checkLike, checkSave, like);
-                      },
-                    );
-                  }).toList(),
+              return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: 40),
+                  scrollDirection: Axis.vertical,
+                  child: StaggeredGrid.count(
+                    crossAxisSpacing: 20,
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 20,
+                    children:
+                        snapshot.data!.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                      return UserBlogPageWidget(data);
+                    }).toList(),
+                  ),
                 ),
               );
             },
           );
   }
 
-  Widget FlowWidgetDetails(
+  Widget UserBlogPageWidget(Map<String, dynamic> data) {
+    bool checkSave = false;
+    bool checkLike = false;
+    bool checkShare = false;
+    int like = 0;
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid.toString())
+          .collection("TextInfo")
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Loading");
+        }
+        snapshot.data!.docs.forEach((element) {
+          Map<String, dynamic> datas = element.data()! as Map<String, dynamic>;
+
+          if (element.id == 'Save' && datas.containsKey(data['Title'])) {
+            checkSave = true;
+          } else if (element.id == 'Save' &&
+              !datas.containsKey(data['Title'])) {
+            checkSave = false;
+          }
+          if (element.id == 'Likes' && datas.containsKey(data['Title'])) {
+            checkLike = true;
+          } else if (element.id == 'Likes' &&
+              !datas.containsKey(data['Title'])) {
+            checkLike = false;
+          }
+        });
+
+        return UserTextWidget(data, checkLike, checkSave, like);
+      },
+    );
+  }
+
+  Widget UserTextWidget(
       Map<String, dynamic> data, bool checkLike, bool checkSave, int like) {
     return GestureDetector(
       onTap: () {
@@ -119,18 +123,18 @@ class _FlowWidgetState extends State<FlowWidget> {
         ));
       },
       child: Container(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         decoration: new BoxDecoration(
           //color: Colors.amber,
           //color: whitecoffee.withOpacity(0.5),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
-        height: 200,
+        height: 220,
         child: Stack(
           fit: StackFit.loose,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(30),
               child: CachedNetworkImage(
                 imageUrl: data['Image']!,
                 width: MediaQuery.of(context).size.width,
@@ -146,8 +150,8 @@ class _FlowWidgetState extends State<FlowWidget> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 10, right: 10, top: 15),
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+                    color: Theme.of(context).backgroundColor.withOpacity(0.65),
                     child: RichText(
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -171,9 +175,10 @@ class _FlowWidgetState extends State<FlowWidget> {
                     padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30)),
+                      color:
+                          Theme.of(context).backgroundColor.withOpacity(0.65),
                     ),
                     width: double.infinity,
                     child: RichText(
@@ -221,16 +226,10 @@ class _FlowWidgetState extends State<FlowWidget> {
                   ]),
             ),
             Positioned(
-              top: 10,
-              right: 0,
-              child:
-                  BuildImageUser(uid: data['user'], username: data['Author']),
-            ),
-            Positioned(
-              top: 2,
-              right: 48,
+              top: 0,
+              right: 3,
               child: BookMarkIconButton(
-                iconSize: 27,
+                iconSize: 25,
                 isSaved: checkSave ? true : false,
                 onPressed: () {
                   setState(() {
@@ -284,8 +283,8 @@ class _FlowWidgetState extends State<FlowWidget> {
               ),
             ),
             Positioned(
-              top: 12,
-              right: 80,
+              top: 10,
+              right: 40,
               child: LikeButton(
                 animationDuration: const Duration(milliseconds: 1000),
                 likeCountAnimationDuration: const Duration(milliseconds: 500),
@@ -297,7 +296,7 @@ class _FlowWidgetState extends State<FlowWidget> {
                 ),
                 circleColor: const CircleColor(
                     start: Color(0xFFFF5722), end: Color(0xFFFFC107)),
-                size: 27,
+                size: 25,
                 isLiked: checkLike ? true : false,
                 // likeCountAnimationType: LikeCountAnimationType.none,
                 // likeCountPadding: EdgeInsets.all(5),
@@ -386,3 +385,6 @@ class _FlowWidgetState extends State<FlowWidget> {
     );
   }
 }
+
+
+/* */

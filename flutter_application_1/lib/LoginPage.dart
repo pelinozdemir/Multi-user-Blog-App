@@ -18,10 +18,9 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Color.fromARGB(255, 32, 153, 193),
         body: LiquidSwipe(
           enableSideReveal: true,
-          slideIconWidget: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-          ),
+          positionSlideIcon: 0.2,
+          enableLoop: false,
+          waveType: WaveType.circularReveal,
           pages: [SignIn(), SignUp()],
         ));
   }

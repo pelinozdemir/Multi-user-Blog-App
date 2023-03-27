@@ -1,60 +1,68 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Colors/Palette.dart';
+import 'package:flutter_application_1/Screen/DiscvoverScreen/DiscoverPage.dart';
 import 'package:flutter_application_1/Tags/BlogTopic.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TopicTag extends StatefulWidget {
+  int topicindex;
+  TopicTag({required this.topicindex});
   @override
-  State<StatefulWidget> createState() => _TopicTags();
+  State<StatefulWidget> createState() => _TopicTags(topicindex: topicindex);
 }
 
 class _TopicTags extends State<TopicTag> {
-  int current = 0;
+  int topicindex;
+  _TopicTags({required this.topicindex});
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(left: 15, right: 15),
       padding: EdgeInsets.all(8),
       child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                setState(() {
-                  current = index;
-                });
+                print(topic[index]);
+                /* Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Discover(topicindex: index),
+                    ));*/
               },
               child: AnimatedContainer(
                 margin: EdgeInsets.all(2),
                 padding: EdgeInsets.all(1),
-                width: current == index ? 75 : 85,
-                height: current == index ? 13 : 15,
+                width: topicindex == index ? 90 : 100,
+                height: topicindex == index ? 16 : 18,
                 duration: const Duration(milliseconds: 300),
                 decoration: BoxDecoration(
-                  color: current == index
-                      ? Color.fromARGB(179, 255, 255, 255)
-                      : Color.fromARGB(159, 196, 196, 196),
-                  borderRadius: current == index
-                      ? BorderRadius.circular(15)
+                  color: topicindex == index
+                      ? Theme.of(context).canvasColor
+                      : Colors.transparent,
+                  borderRadius: topicindex == index
+                      ? BorderRadius.circular(20)
                       : BorderRadius.circular(10),
-                  border: current == index
-                      ? Border.all(
-                          color: Color.fromARGB(255, 92, 59, 185), width: 2)
+                  border: topicindex == index
+                      ? Border.all(color: darkBlue, width: 2)
                       : null,
                 ),
                 child: Center(
                   //style: TextStyle(fontSize: 50),
 
                   child: Padding(
-                    padding: EdgeInsets.all(0),
+                    padding: EdgeInsets.only(left: 5, right: 5),
                     child: Text(
                       textAlign: TextAlign.center,
                       topic[index],
                       style: GoogleFonts.dosis(
                           fontWeight: FontWeight.w500,
-                          color: current == index
-                              ? Colors.black
-                              : Color.fromARGB(255, 102, 101, 101),
-                          fontSize: current == index ? 13 : 14),
+                          color: topicindex == index
+                              ? Colors.white
+                              : Theme.of(context).canvasColor,
+                          fontSize: topicindex == index ? 14 : 15.5),
                     ),
                   ),
                 ),

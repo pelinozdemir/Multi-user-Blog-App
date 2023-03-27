@@ -37,77 +37,79 @@ class _DiscoverWidgetState extends State<DiscoverWidget> {
           ),
         ));
       },
-      child: AnimatedContainer(
-        duration: Duration(microseconds: 10),
-        height: (count! % 5) * 125,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
+      child: Column(
+        children: [
+          AnimatedContainer(
+            duration: Duration(microseconds: 10),
+            height: (count! % 5) * 125,
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              child: CachedNetworkImage(
-                imageUrl: data['Image']!,
-                width: MediaQuery.of(context).size.width,
-                height: (count! % 5) * 125,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => new CircularProgressIndicator(),
-                errorWidget: (context, url, error) => new Icon(Icons.error),
-              ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromARGB(255, 255, 254, 254).withOpacity(0.3)),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 13, left: 3, right: 3),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            strutStyle: StrutStyle(fontSize: 10.0),
-                            text: TextSpan(
-                              text: data['Title'].toString()[0].toUpperCase() +
-                                  data['Title']
-                                      .toString()
-                                      .substring(1)
-                                      .toLowerCase(),
-                              style: GoogleFonts.dosis(
-                                  color: Color.fromARGB(255, 39, 39, 39),
-                                  fontSize: (count! % 5) >= 3
-                                      ? rng.nextInt(12) + 20
-                                      : rng.nextInt(10) + 20,
-                                  fontWeight: FontWeight.w600),
-                            )
-
-                            //style: TextStyle(fontSize: 50),
-                            ),
-                        /* RichText(
-                            overflow: TextOverflow.ellipsis,
-                            strutStyle: StrutStyle(fontSize: 12.0),
-                            text: TextSpan(
-                              text: author.toString(),
-                              style: GoogleFonts.dosis(
-                                  color: Color.fromARGB(255, 39, 39, 39),
-                                  fontSize: (count! % 5) >= 3
-                                      ? rng.nextInt(10) + 15
-                                      : rng.nextInt(15) + 17,
-                                  fontWeight: FontWeight.w400),
-                            )),*/
-                      ]),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: data['Image']!,
+                    width: MediaQuery.of(context).size.width,
+                    height: (count! % 5) * 125,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        new CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => new Icon(Icons.error),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Container(
+            margin: EdgeInsets.all(5),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        strutStyle: StrutStyle(fontSize: 10.0),
+                        text: TextSpan(
+                          text: data['Title'].toString()[0].toUpperCase() +
+                              data['Title']
+                                  .toString()
+                                  .substring(1)
+                                  .toLowerCase(),
+                          style: GoogleFonts.dosis(
+                              color: Theme.of(context).canvasColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        )
+
+                        //style: TextStyle(fontSize: 50),
+                        ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                    ),
+                    width: double.infinity,
+                    child: RichText(
+                        overflow: TextOverflow.ellipsis,
+                        strutStyle: StrutStyle(fontSize: 12.0),
+                        text: TextSpan(
+                          text: data['Author'].toString(),
+                          style: GoogleFonts.dosis(
+                              color: Theme.of(context).cardColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400),
+                        )),
+                  ),
+                ]),
+          ),
+        ],
       ),
     );
   }

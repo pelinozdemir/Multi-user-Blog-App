@@ -22,30 +22,72 @@ Widget buildImage() {
         // get course document
 
         // build list using names from sections
-        return GestureDetector(
-          onTap: () {},
-          child: Container(
-            child: Column(
-              children: [
-                Stack(fit: StackFit.loose, children: [
-                  CircleAvatar(
-                    radius: 70,
-                    backgroundImage: CachedNetworkImageProvider(
-                      snapshot.data!['Profile'].toString(),
+        return Container(
+          margin: EdgeInsets.only(left: 10, top: 0, right: 10),
+          child: Stack(
+            fit: StackFit.loose,
+            children: [
+              snapshot.data!['Profile'].toString() != null
+                  ? CircleAvatar(
+                      radius: 40,
+                      backgroundImage: CachedNetworkImageProvider(
+                          snapshot.data!['Profile'].toString()),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: Theme.of(context).canvasColor,
                     ),
-                  ),
-                  Positioned(bottom: 0, right: 3, child: buildIcon(context))
-                ]),
-                const SizedBox(
-                  height: 24,
-                ),
-                /*  Text(snapshot.data!['Username'].toString(),
-                    style: GoogleFonts.dosis(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold))*/
-              ],
-            ),
+
+              /*  Text(snapshot.data!['Username'].toString(),
+                   style: GoogleFonts.dosis(
+                       color: Colors.black,
+                       fontSize: 25,
+                       fontWeight: FontWeight.bold))*/
+            ],
+          ),
+        );
+      } else {
+        return Container();
+      }
+    },
+  );
+}
+
+Widget buildImageSmall() {
+  User? user = FirebaseAuth.instance.currentUser;
+  print(user!.uid.toString());
+  final Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance
+      .collection('Users')
+      .doc(user.uid.toString())
+      .snapshots();
+  print(_usersStream);
+  return StreamBuilder<DocumentSnapshot>(
+    stream: _usersStream,
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.active) {
+        // get course document
+
+        // build list using names from sections
+        return Container(
+          margin: EdgeInsets.only(left: 10, top: 10, right: 25),
+          child: Stack(
+            fit: StackFit.loose,
+            children: [
+              snapshot.data!['Profile'].toString() != null
+                  ? CircleAvatar(
+                      radius: 20,
+                      backgroundImage: CachedNetworkImageProvider(
+                          snapshot.data!['Profile'].toString()),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: Theme.of(context).canvasColor,
+                    ),
+
+              /*  Text(snapshot.data!['Username'].toString(),
+                   style: GoogleFonts.dosis(
+                       color: Colors.black,
+                       fontSize: 25,
+                       fontWeight: FontWeight.bold))*/
+            ],
           ),
         );
       } else {

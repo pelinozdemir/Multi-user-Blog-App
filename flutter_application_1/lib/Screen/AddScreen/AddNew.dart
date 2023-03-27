@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +18,7 @@ class AddNew extends StatefulWidget {
 class _AddNewState extends State<AddNew> {
   File? image;
   File? imagetemp;
-  String? author, desc, text;
+  String? desc, text;
   String title = '';
   String? downloadurl = '';
   int index = 0;
@@ -28,6 +29,11 @@ class _AddNewState extends State<AddNew> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            leading: IconButton(
+                onPressed: () {
+                  saveButton();
+                },
+                icon: Icon(Icons.done)),
             bottom: PreferredSize(
                 child: Container(
                   padding: EdgeInsets.only(top: 5, bottom: 10),
@@ -40,8 +46,7 @@ class _AddNewState extends State<AddNew> {
                   ),
                 ),
                 preferredSize: Size.fromHeight(20)),
-            backgroundColor: darkBlue,
-            expandedHeight: 500.0,
+            expandedHeight: 350.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
@@ -52,7 +57,7 @@ class _AddNewState extends State<AddNew> {
                   )),*/
               background: GestureDetector(
                 child: Container(
-                  color: Colors.white,
+                  //color: Colors.white,
                   child: image != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(6),
@@ -77,7 +82,9 @@ class _AddNewState extends State<AddNew> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Kamera',
-                                    style: TextStyle(fontSize: 25),
+                                    style: GoogleFonts.dosis(
+                                        color: Theme.of(context).canvasColor,
+                                        fontSize: 20),
                                   ),
                                   onPressed: () async =>
                                       pickImage(ImageSource.camera),
@@ -85,7 +92,9 @@ class _AddNewState extends State<AddNew> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Galeri',
-                                    style: TextStyle(fontSize: 25),
+                                    style: GoogleFonts.dosis(
+                                        color: Theme.of(context).canvasColor,
+                                        fontSize: 20),
                                   ),
                                   onPressed: () async =>
                                       pickImage(ImageSource.gallery),
@@ -101,35 +110,19 @@ class _AddNewState extends State<AddNew> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 30),
-                  child: TextField(
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                        icon: Icon(Icons.arrow_right, color: arrow_color),
-                        hintText: "Yazar Adı",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                        )),
-                    onChanged: (val) {
-                      author = val;
-                    },
-                  ),
-                ),
-                SizedBox(
                   height: 10,
                 ),
                 Container(
                   margin: EdgeInsets.only(right: 30),
                   child: TextField(
+                    style: GoogleFonts.dosis(
+                        color: Theme.of(context).canvasColor, fontSize: 15),
                     decoration: InputDecoration(
                         icon: Icon(Icons.arrow_right, color: arrow_color),
-                        hintText: "Başlık",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                        )),
+                        hintText: "Title",
+                        hintStyle: GoogleFonts.dosis(
+                            fontSize: 15,
+                            color: Theme.of(context).canvasColor)),
                     onChanged: (val) {
                       title = val;
                     },
@@ -142,14 +135,16 @@ class _AddNewState extends State<AddNew> {
                   margin: EdgeInsets.only(right: 30),
                   child: TextField(
                     autocorrect: true,
+                    style: GoogleFonts.dosis(
+                        color: Theme.of(context).canvasColor, fontSize: 15),
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                         icon: Icon(Icons.arrow_right, color: arrow_color),
-                        hintText: "Düşüncelerinizi paylaşın",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                        )),
+                        hintText: "Description",
+                        hintStyle: GoogleFonts.dosis(
+                            fontSize: 15,
+                            color: Theme.of(context).canvasColor)),
                     onChanged: (val) {
                       desc = val;
                     },
@@ -162,14 +157,16 @@ class _AddNewState extends State<AddNew> {
                   margin: EdgeInsets.only(right: 30),
                   child: TextField(
                     autocorrect: true,
+                    style: GoogleFonts.dosis(
+                        color: Theme.of(context).canvasColor, fontSize: 15),
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                         icon: Icon(Icons.arrow_right, color: arrow_color),
-                        hintText: "Düşüncelerinizi paylaşın",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                        )),
+                        hintText: "Write yout idea",
+                        hintStyle: GoogleFonts.dosis(
+                            fontSize: 15,
+                            color: Theme.of(context).canvasColor)),
                     onChanged: (val) {
                       text = val;
                     },
@@ -180,60 +177,65 @@ class _AddNewState extends State<AddNew> {
           )
         ],
       ),
-      floatingActionButton: Container(
-        color: Color.fromARGB(0, 250, 247, 247),
-        width: 100,
-        child: FloatingActionButton(
-          backgroundColor: Color.fromARGB(226, 213, 143, 143),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          onPressed: () async {
-            showCupertinoModalPopup(
-              context: context,
-              builder: (context) => CupertinoActionSheet(
-                actions: topic
-                    .map((e) => CupertinoActionSheetAction(
-                        onPressed: () async {
-                          FirebaseAuth auth = FirebaseAuth.instance;
+    );
+  }
 
-                          try {
-                            Reference ref = FirebaseStorage.instance
-                                .ref()
-                                .child('writing')
-                                .child('${title}');
+  void saveButton() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: topic
+            .map((e) => CupertinoActionSheetAction(
+                onPressed: () async {
+                  FirebaseAuth auth = FirebaseAuth.instance;
 
-                            await uploadImage(ref).then((value) async {
-                              await FirebaseFirestore.instance
-                                  .collection("Posts")
-                                  .doc(auth.currentUser!.uid)
-                                  .collection("Texts")
-                                  .doc(title)
-                                  .set({
-                                "Author": author,
-                                "Title": title,
-                                "Desc": desc,
-                                "Text": text,
-                                "Topic": e.toString().trim(),
-                                "Image": downloadurl.toString().trim(),
-                                "Date": date
-                              });
-                            }).then((value) => showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    content: Text('Kaydedildi'),
-                                  ),
-                                ));
-                          } catch (e) {
-                            print(e);
-                          }
-                        },
-                        child: Text(e)))
-                    .toList(),
-              ),
-            );
-          },
-          child: Text('KAYDET'),
-        ),
+                  try {
+                    Reference ref = FirebaseStorage.instance
+                        .ref()
+                        .child('writing')
+                        .child('${title}');
+
+                    await uploadImage(ref).then((value) async {
+                      var docsnap = await FirebaseFirestore.instance
+                          .collection('Users')
+                          .doc(auth.currentUser!.uid.toString())
+                          .get();
+
+                      Map<String, dynamic> data = docsnap.data()!;
+
+                      await FirebaseFirestore.instance
+                          .collection("Posts")
+                          .doc(auth.currentUser!.uid)
+                          .collection("Texts")
+                          .doc(title)
+                          .set({
+                        "user":
+                            FirebaseAuth.instance.currentUser!.uid.toString(),
+                        "like": 0.toInt(),
+                        "save": 0.toInt(),
+                        "Author": data['Username'],
+                        "Title": title,
+                        "Desc": desc,
+                        "Text": text,
+                        "Topic": e.toString().trim(),
+                        "Image": downloadurl.toString().trim(),
+                        "Date": date
+                      });
+                    }).then((value) => showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            content: Text(
+                              'Kaydedildi',
+                              style: GoogleFonts.dosis(fontSize: 15),
+                            ),
+                          ),
+                        ));
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: Text(e)))
+            .toList(),
       ),
     );
   }
