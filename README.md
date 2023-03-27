@@ -10,6 +10,10 @@ Kullanıcıların yeni blog yazıları paylaşabildiği akışta diğer kullanı
      <td><img src="https://user-images.githubusercontent.com/79792586/209449067-6b824573-a908-4c0d-bdbf-e85d1dce0e7d.jpg" width="180"></td>
        <td><img src="https://user-images.githubusercontent.com/79792586/223885524-0dfc8e75-addf-499c-bf39-989de6a34345.jpg" width="180"></td>
        <td><img src=![blog](https://user-images.githubusercontent.com/79792586/227983760-cd888880-b558-4a49-86a7-c81604f22196.jpg) width="180"></td>
+       <td><img src=![blog](https://user-images.githubusercontent.com/79792586/227983760-cd888880-b558-4a49-86a7-c81604f22196.jpg) width="180"></td>
+  
+       <td><img src=![blog](https://user-images.githubusercontent.com/79792586/227983760-cd888880-b558-4a49-86a7-c81604f22196.jpg) width="180"></td>
+  
  
 
 
