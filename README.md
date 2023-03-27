@@ -1,4 +1,4 @@
-# Multi-user-Blog-App(Devam Ediyor)
+# Multi-user-Blog-App
 Kullanıcıların yeni blog yazıları paylaşabildiği akışta diğer kullanıcıların paylaştıklarını görebileceği birbirleri ile takip ve mesaj etkileşimlerinde bulunabileceği çok kullanıcılı blog uygulamasıdır.
 
 <table border="0">
