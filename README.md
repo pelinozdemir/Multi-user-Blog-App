@@ -12,6 +12,8 @@ Kullanıcıların yeni blog yazıları paylaşabildiği akışta diğer kullanı
  
 
 
+![WhatsApp Image 2023-03-27 at 18 08 08](https://user-images.githubusercontent.com/79792586/227982661-0b04b9c6-ea2a-4238-a823-92e6677414b2.jpg)
+
  </tr>
 
     
